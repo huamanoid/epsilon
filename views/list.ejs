@@ -14,6 +14,14 @@
         <div class="d-flex w-100 justify-content-between">
           <h2 class="mb-1">All Articles</h2>
         </div>
+        <p>
+          <form action="/articles" method="GET" class = "form-inline">
+            <div class="form-group">
+              <input type="text" name="search" placeholder="search..." class="form-control">
+              <input type="submit"  value="Search" class="btn btn-default">
+            </div>
+          </form>
+        </p>
       </a>
   
       <% items.forEach(function(item) {%>

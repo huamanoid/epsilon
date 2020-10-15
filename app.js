@@ -8,9 +8,11 @@ var express               = require("express"),
     port = process.env.PORT || 1000;
 
 
-    app.use(express.static("public"));
-    // mongoose.connect("mongodb://localhost/pasta_dishes");
-     mongoose.connect('mongodb+srv://aman:letmein01@cricmaniac-ereth.mongodb.net/test?retryWrites=true&w=majority',
+    // local database
+    // mongoose.connect("mongodb://localhost/articles");
+
+    // Onilne database - mongoDB atlas
+    mongoose.connect('mongodb+srv://admin:admin@cluster0.kdkhc.mongodb.net/test?retryWrites=true&w=majority',
  {
      useNewUrlParser: true,
      useCreateIndex: true
@@ -21,26 +23,41 @@ var express               = require("express"),
  });
 
 
+//  To look for files in public directory
+ app.use(express.static("public"));
+
 
 // Seeding
 seedDB();
 
-
+// For POST method
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
 
 // Home page
 app.get('/', function(req, res){
-    res.send("Welcome Home");
+    res.render("home.ejs");
 });
 
 // List all articles
-app.get('/articles', function(req, res){
-    // res.render("list.ejs");
-    Article.find({},function(err,items){
-        if(err)console.log(err);
-        else{res.render("list.ejs",{items:items});}
-     });
+//      and 
+// Search an article
+app.get("/articles", function(req, res){
+
+    if(req.query.search) {
+        const regex = new RegExp(escapeRegex(req.query.search), 'gi');
+        // Get all found articles from DB
+        Article.find({ $or: [ { title: regex }, { content: regex } ] }, function(err, allArticles){
+           if(err)  console.log(err);
+            res.render("list.ejs", {items:allArticles});
+        });
+    } else {
+        // List all articles
+        Article.find({},function(err,items){
+            if(err)console.log(err);
+            else{res.render("list.ejs",{items:items});}
+         });
+    }
 });
 
 // Create an article
@@ -64,7 +81,6 @@ app.post('/articles', function(req, res){
 
 // Get an article using an id
 app.get('/articles/:id', function(req, res){
-    // res.send("what's up nigga")
     Article.findById(req.params.id,  function(err, founditem){
         if(err)console.log(err);
         else{
@@ -73,13 +89,11 @@ app.get('/articles/:id', function(req, res){
     });
 });
 
-// Search an article
-// app.get("/search/:name", function(req, res){
-//     var regex = RegExp(req.params.name, 'i');
-//     Article.find({title:regex}).then((result)=>{
-//         res.status(200).json(result);
-//     })
-// });
+
+// Search regex helper function
+function escapeRegex(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};
 
 // PORT 1000
 app.listen(port, ()=>{

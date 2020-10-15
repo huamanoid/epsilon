@@ -10,6 +10,14 @@ var data = [
         {title  : "Four Bhopal based engineers build top scheduling applications worldwide", 
         content : "In a re-telling of the classic rags-to-riches tale, four engineers in Bhopal have built a technology tool that is regarded as one of the top scheduling applications worldwide. The product, aptly named as Appointy is being used by 58,000 clients globally and is delivering net revenue of about Rs 24 lakh every month for the six-yearold company."
         },
+        
+        {title  : "abc", 
+        content : "xyz"
+        },
+        
+        {title  : "xyz", 
+        content : "abc"
+        },
 
         
         
